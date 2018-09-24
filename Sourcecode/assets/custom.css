@@ -1,0 +1,22 @@
+body {
+	background-color: black;
+}
+
+h2 {
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    border: 2px solid white;
+    margin: 100px
+
+}
+
+.app-header .app-header--title {
+    font-size: 22px;
+    padding-left: 5px;
+}
+
+.my-range-slider {
+	margin-top: 100px;
+	margin-bottom: 100px;
+}
