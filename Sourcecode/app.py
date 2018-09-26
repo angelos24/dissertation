@@ -1,7 +1,10 @@
 import dash, plotly
 import dash_html_components as html
 import dash_core_components as dcc
+from dash.dependencies import Input, Output
 import pandas as pd
+import json
+
 
 
 app = dash.Dash()
@@ -15,7 +18,7 @@ for css in external_css:
     app.css.append_css({"external_url": css})
 
 df = pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\leuchar.csv')
-print(df)
+print(df['yyyy'])
 
 app.layout = html.Div([
 	html.H2("Scotland Weather Data"),
@@ -26,9 +29,12 @@ app.layout = html.Div([
             figure={
                 "data": [
                     dict(
+                    	lat = ['56.38'],
+                    	lon =  ['-2.88'],
                         type = "scattermapbox",
                         mode = "markers",
-                        marker = {'size': '14'},
+                        marker = {'size': '14',},
+                        text = ['Leuchar']
                     )
                 ],
                 "layout": dict(
@@ -36,20 +42,26 @@ app.layout = html.Div([
                     margin = dict(l = 0, r = 0, t = 0, b = 0),
                     mapbox = dict(
                         accesstoken = mapbox_access_token,
-                        center = dict(lat = 38.30, lon = -90.68),
+                        center = dict(lat = 56.49, lon = -4.20),
                         style = "dark",
-                        zoom = 3.5,
+                        zoom = 6,
                         layers = []
                     )   
                 )
             },
         ),
         dcc.RangeSlider(
-        className='my-range-slider',
-        min=0,
-        max=20,
-        step=0.5,
-        value=[5, 15]
+        className = 'my-range-slider',
+        min = df['yyyy'].min(),
+        max = df['yyyy'].max(),
+        marks = {str(date): str(date)
+        		for date in df['yyyy'].unique()},
+		value=[1970, 1993],
+
+		
+    ),
+        html.Div(
+        html.Pre(id='test', style={'overflowY': 'scroll', 'height': '100vh', 'color': 'white'})
     ),
 
         html.Div([
@@ -60,7 +72,16 @@ app.layout = html.Div([
 			html.Div([dcc.Graph(id='sun_graph')], className='col-md-4'),
 			html.Div([dcc.Graph(id='rain_graph')], className='col-md-4'),
 		], className='row')
-	], className='container-fluid')
+	],  className='container-fluid')
+
+
+@app.callback(
+        Output('test', 'children'),
+        [Input('mapbox', 'clickData')])
+
+def display_data(clickData):
+    return json.dumps(clickData, indent=2)
+
 
 
 

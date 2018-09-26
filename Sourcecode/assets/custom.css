@@ -19,4 +19,8 @@ h2 {
 .my-range-slider {
 	margin-top: 100px;
 	margin-bottom: 100px;
+    color: white;
+}
+.rc-slider-mark {
+    font-size: 10px;
 }
