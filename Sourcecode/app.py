@@ -18,7 +18,7 @@ for css in external_css:
     app.css.append_css({"external_url": css})
 
 df = pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\leuchar.csv')
-print(df['yyyy'])
+print(df)
 
 app.layout = html.Div([
 	html.H2("Scotland Weather Data"),
@@ -52,6 +52,7 @@ app.layout = html.Div([
         ),
         dcc.RangeSlider(
         className = 'my-range-slider',
+        id = 'my-range-slider',
         min = df['yyyy'].min(),
         max = df['yyyy'].max(),
         marks = {str(date): str(date)
@@ -60,6 +61,11 @@ app.layout = html.Div([
 
 		
     ),
+     html.Div([
+     	html.H3(id='year-range', style={'color': 'white'}),
+		], className='row'),
+
+
         html.Div(
         html.Pre(id='test', style={'overflowY': 'scroll', 'height': '100vh', 'color': 'white'})
     ),
@@ -73,6 +79,16 @@ app.layout = html.Div([
 			html.Div([dcc.Graph(id='rain_graph')], className='col-md-4'),
 		], className='row')
 	],  className='container-fluid')
+
+
+@app.callback(
+    Output('year-range', 'children'),
+    [Input('my-range-slider', 'value')]
+)
+
+def update_output(value):
+    return 'You have selected "{}"'.format(value)
+
 
 
 @app.callback(
