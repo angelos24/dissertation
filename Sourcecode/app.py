@@ -22,6 +22,8 @@ for css in external_css:
 df = pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\leuchar.csv')
 # df.sort_values(by=['yyyy'])
 
+string_tmax = [str(x) for x in df['tmin']]
+
 print(df)
 
 
@@ -102,12 +104,9 @@ app.layout = html.Div([
 )
 
 def update_output(year_range):
-	date_start = '{}-01-01'.format(year_range[0])
-	date_end = '{}-12-31'.format(year_range[1])
-	yearvalues = pd.date_range(start=date_start ,end=date_end,freq='Y')
-	years = yearvalues.year
-	return str(years)
 
+
+	return str(year_range)
 
 
 
@@ -127,122 +126,44 @@ def update_output(year_range):
         [Input('mapbox', 'clickData'),
          Input('my-range-slider', 'value')])
 
-def update_graph( clickData, year_range):
+def update_graph(clickData, year_range):
 
-    data = go.Data([
-        go.Scatter(
-            name='Max temperature',
-            # events qty
-            x=year_range,
-            # year
-            y=[df['tmax']],
+	date_start = '{}-01-01'.format(year_range[0])
+	date_end = '{}-12-31'.format(year_range[1])
+	yearvalues = pd.date_range(start=date_start ,end=date_end,freq='Y')
+	string_dates = [str(x) for x in yearvalues.year]
 
-            mode='lines',
-            marker={
-                'symbol': 'circle',
-                'size': 5,
-                'color': '#eb1054'
-            },
-            hoverlabel={
-                'bgcolor': '#FFF',
-            },
-        ),
-        go.Scatter(
-            name='Min temperature',
-            # events qty
-            x=year_range,
-            # year
-            y=df['tmin'],
-            mode='lines',
-            marker={
-                'symbol': 'circle',
-                'size': 5,
-                'color': '#C2FF0A'
-            },
-            hoverlabel={
-                'bgcolor': '#FFF',
-            },
-        ),
-    ])
-    layout = go.Layout(
-        xaxis={
-            'color': '#FFF',
-            'title': 'year',
-        },
-        yaxis={
-            'color': '#FFF',
-            'title': 'temperature range',
-        },
-        margin={
-            'l': 40,
-            'b': 40,
-            't': 10,
-            'r': 0
-        },
-        hovermode='closest',
-        paper_bgcolor='#191a1a',
-        plot_bgcolor='#191a1a',
+	string_tmax = [str(x) for x in df['tmax']]
+	string_tmin = [str(x) for x in df['tmin']]
+
+	month = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+         'August', 'September', 'October', 'November', 'Decemberss','test1', 'test2']
+	high_2000 = [3,4,10]
+	low_2000 = [1,2,5]
+
+	trace0 = go.Scatter(
+    x = string_dates,
+    y = string_tmax,
+    name = 'High 2014',
+    line = dict(
+        color = ('rgb(205, 12, 24)'),
+        width = 4)
     )
+	trace1 = go.Scatter(
+	x = string_dates,
+    y = string_tmin,
+    name = 'Low 2014',
+    line = dict(
+        color = ('rgb(22, 96, 167)'),
+        width = 4,))
 
-    return go.Figure(
-        data=data,  
-        layout=layout
-    )
-
-
-
-    @app.callback(
-        Output('sun_graph', 'figure'),
-        [Input('mapbox', 'clickData'),
-         Input('my-range-slider', 'value')])
-
-    def sun_chart(clickData):
-
-    	data = go.Data([
-        go.Scatter(
-            name='Sun',
-            # events qty
-            x=year_range,
-            # year
-            y=df['sun'],
-
-            mode='bar',
-            marker={
-                'symbol': 'circle',
-                'size': 5,
-                'color': '#eb1054'
-            },
-            hoverlabel={
-                'bgcolor': '#FFF',
-            },
-        ),
-    ])
-    layout = go.Layout(
-        xaxis={
-            'color': '#FFF',
-            'title': 'year',
-        },
-        yaxis={
-            'color': '#FFF',
-            'title': 'Sunshine hours',
-        },
-        margin={
-            'l': 40,
-            'b': 40,
-            't': 10,
-            'r': 0
-        },
-        hovermode='closest',
-        paper_bgcolor='#191a1a',
-        plot_bgcolor='#191a1a',
-    )
-
-    return go.Figure(
-        data=data,  
-        layout=layout
-    )
-
-
+	return {
+	'data': [trace0,trace1],
+	'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Average High and Low Temperatures in Leuchar',
+              xaxis = dict(title = 'Month', gridcolor='black',),
+              yaxis = dict(title = 'Temperature (degrees Celsius)',gridcolor='black',),
+              )
+	}
 
 if __name__ == "__main__":
 	app.run_server(debug=True)
