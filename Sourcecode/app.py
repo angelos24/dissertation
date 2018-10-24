@@ -20,19 +20,10 @@ for css in external_css:
     app.css.append_css({"external_url": css})
 
 df = pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\leuchar.csv')
-# df.sort_values(by=['yyyy'])
+df.sort_values(by=['yyyy'])
 
-string_tmax = [str(x) for x in df['tmin']]
 
 print(df)
-
-
-# dfmax = df['tmax'].groupby(df['yyyy']).describe()
-
-
-
-
-
 
 
 app.layout = html.Div([
@@ -89,10 +80,10 @@ app.layout = html.Div([
         	dcc.Graph(
         		 id='temp_graph',
         		 config={'displayModeBar': False})], className='col-md-12'),
-			# html.Div([
-			# 	dcc.Graph(
-			# 		id='sun_graph',
-			# 		config={'displayModeBar': False})], className='col-md-6'),
+			html.Div([
+				dcc.Graph(
+					id='sun_graph',
+					config={'displayModeBar': False})], className='col-md-12'),
 			# html.Div([dcc.Graph(id='rain_graph')], className='col-md-4'),
 		], className='row')
 	],  className='container-fluid')
@@ -100,25 +91,14 @@ app.layout = html.Div([
 
 @app.callback(
     Output('year-range', 'children'),
-    [Input('my-range-slider', 'value')]
+    [Input('my-range-slider', 'value'),
+    Input('mapbox', 'clickData')]
 )
 
-def update_output(year_range):
+def update_output(year_range, clickData):
 
 
-	return str(year_range)
-
-
-
-
-# @app.callback(
-#     	Output('test', 'children'),
-#     	[Input('my-range-slider', 'value')]
-#     	)
-
-# def test(year_range):
-#     dff = df[df['year'] == year_range]
-#     return '{} joules'.format(str(dff['tmax'].max()))
+	return json.dumps(clickData, indent=2)
 
 
 @app.callback(
@@ -130,16 +110,11 @@ def update_graph(clickData, year_range):
 
 	date_start = '{}-01-01'.format(year_range[0])
 	date_end = '{}-12-31'.format(year_range[1])
-	yearvalues = pd.date_range(start=date_start ,end=date_end,freq='Y')
-	string_dates = [str(x) for x in yearvalues.year]
+	yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
+	string_dates = [str(x) for x in yearvalues]
 
 	string_tmax = [str(x) for x in df['tmax']]
 	string_tmin = [str(x) for x in df['tmin']]
-
-	month = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
-         'August', 'September', 'October', 'November', 'Decemberss','test1', 'test2']
-	high_2000 = [3,4,10]
-	low_2000 = [1,2,5]
 
 	trace0 = go.Scatter(
     x = string_dates,
@@ -160,7 +135,7 @@ def update_graph(clickData, year_range):
 	return {
 	'data': [trace0,trace1],
 	'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Average High and Low Temperatures in Leuchar',
-              xaxis = dict(title = 'Month', gridcolor='black',),
+              xaxis = dict(title = 'Year Range', gridcolor='black',),
               yaxis = dict(title = 'Temperature (degrees Celsius)',gridcolor='black',),
               )
 	}
