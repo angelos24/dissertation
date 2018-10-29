@@ -68,11 +68,11 @@ app.layout = html.Div([
 
 		
     ),
-        html.H3(id='test', style={'color': 'white'}),
+        html.H3(id='test'),
 
 
      html.Div([
-     	html.H3(id='year-range', style={'color': 'white'}),
+     	html.H3(id='year-range'),
 		], className='row'),
 
         html.Div([
@@ -82,9 +82,12 @@ app.layout = html.Div([
         		 config={'displayModeBar': False})], className='col-md-12'),
 			html.Div([
 				dcc.Graph(
+					id='rain_graph',
+					config={'displayModeBar': False})], className='col-md-12'),
+			html.Div([
+				dcc.Graph(
 					id='sun_graph',
 					config={'displayModeBar': False})], className='col-md-12'),
-			# html.Div([dcc.Graph(id='rain_graph')], className='col-md-4'),
 		], className='row')
 	],  className='container-fluid')
 
@@ -96,8 +99,6 @@ app.layout = html.Div([
 )
 
 def update_output(year_range, clickData):
-
-
 	return json.dumps(clickData, indent=2)
 
 
@@ -119,7 +120,7 @@ def update_graph(clickData, year_range):
 	trace0 = go.Scatter(
     x = string_dates,
     y = string_tmax,
-    name = 'High 2014',
+    name = 'High Temperature',
     line = dict(
         color = ('rgb(205, 12, 24)'),
         width = 4)
@@ -127,18 +128,50 @@ def update_graph(clickData, year_range):
 	trace1 = go.Scatter(
 	x = string_dates,
     y = string_tmin,
-    name = 'Low 2014',
+    name = 'Low Temperature',
     line = dict(
         color = ('rgb(22, 96, 167)'),
         width = 4,))
 
 	return {
 	'data': [trace0,trace1],
-	'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Average High and Low Temperatures in Leuchar',
+	'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Max and Low Temperatures in Leuchar',
               xaxis = dict(title = 'Year Range', gridcolor='black',),
               yaxis = dict(title = 'Temperature (degrees Celsius)',gridcolor='black',),
               )
 	}
+
+
+@app.callback(
+        Output('rain_graph', 'figure'),
+        [Input('mapbox', 'clickData'),
+         Input('my-range-slider', 'value')])
+
+def update_graph(clickData, year_range):
+
+    date_start = '{}-01-01'.format(year_range[0])
+    date_end = '{}-12-31'.format(year_range[1])
+    yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
+    string_dates = [str(x) for x in yearvalues]
+
+    string_rain = [str(x) for x in df['rain']]
+
+    trace1 = go.Bar(
+    x=string_dates,
+    y=string_rain,
+    name='Primary Product',
+    marker=dict(
+        color='rgb(49,130,189)'
+    )
+)
+
+    return {
+    'data': [trace1],
+    'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Percipitation in Leuchar',
+              xaxis = dict(title = 'Year Range', gridcolor='black',),
+              yaxis = dict(title = 'Rain (MM)',gridcolor='black',),
+              )
+    }
 
 if __name__ == "__main__":
 	app.run_server(debug=True)
