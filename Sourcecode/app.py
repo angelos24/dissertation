@@ -159,11 +159,10 @@ def update_graph(clickData, year_range):
     trace1 = go.Bar(
     x=string_dates,
     y=string_rain,
-    name='Primary Product',
     marker=dict(
         color='rgb(49,130,189)'
+        )
     )
-)
 
     return {
     'data': [trace1],
@@ -172,6 +171,45 @@ def update_graph(clickData, year_range):
               yaxis = dict(title = 'Rain (MM)',gridcolor='black',),
               )
     }
+
+@app.callback(
+        Output('sun_graph', 'figure'),
+        [Input('mapbox', 'clickData'),
+         Input('my-range-slider', 'value')])
+
+def update_graph(clickData, year_range):
+
+    date_start = '{}-01-01'.format(year_range[0])
+    date_end = '{}-12-31'.format(year_range[1])
+    yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
+    string_dates = [str(x) for x in yearvalues]
+    string_sun = [str(x) for x in df['sun']]
+    string_af = [str(x) for x in df['af']]
+
+    trace1 = go.Bar(
+    x=string_dates,
+    y=string_sun,
+    marker=dict(
+        color='rgb(49,130,189)'
+        )
+    )
+
+    trace2 = go.Bar(
+    x=string_dates,
+    y=string_af,
+    marker=dict(
+        color='red'
+        )
+    )
+
+    return {
+    'data': [trace1,trace2],
+    'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Total Monthly Sunshine & Air Frost in Leuchar',
+              xaxis = dict(title = 'Year Range', gridcolor='black',),
+              yaxis = dict(title = 'Sunshine hours',gridcolor='black',),
+              )
+    }
+
 
 if __name__ == "__main__":
 	app.run_server(debug=True)
