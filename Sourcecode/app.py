@@ -20,10 +20,7 @@ for css in external_css:
     app.css.append_css({"external_url": css})
 
 df = pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\leuchar.csv')
-df.sort_values(by=['yyyy'])
 
-
-print(df)
 
 
 app.layout = html.Div([
@@ -99,7 +96,17 @@ app.layout = html.Div([
 )
 
 def update_output(year_range, clickData):
-	return json.dumps(clickData, indent=2)
+    date_start = '{}'.format(year_range[0])
+    date_end = '{}'.format(year_range[1])
+    yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
+    string_dates = [str(x) for x in yearvalues]
+    # string_sun = [str(x) for x in df['sun']]
+    # string_af = [str(x) for x in df['af']]
+    newdata = df.loc[(df['yyyy'] > int(date_start)) & (df['yyyy'] <= int(date_end)), ['tmax', 'tmin', 'sun', 'rain', 'af']] 
+    # mask = df['yyyy'].between(int(date_start), int(date_end))
+    string_sun = [str(x) for x in newdata['tmax']]
+    string_af = [str(x) for x in newdata['tmin']]
+    print(string_sun)
 
 
 @app.callback(
@@ -109,11 +116,10 @@ def update_output(year_range, clickData):
 
 def update_graph(clickData, year_range):
 
-	date_start = '{}-01-01'.format(year_range[0])
-	date_end = '{}-12-31'.format(year_range[1])
+	date_start = '{}'.format(year_range[0])
+	date_end = '{}'.format(year_range[1])
 	yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
 	string_dates = [str(x) for x in yearvalues]
-
 	string_tmax = [str(x) for x in df['tmax']]
 	string_tmin = [str(x) for x in df['tmin']]
 
@@ -186,6 +192,7 @@ def update_graph(clickData, year_range):
     string_sun = [str(x) for x in df['sun']]
     string_af = [str(x) for x in df['af']]
 
+
     trace1 = go.Bar(
     x=string_dates,
     y=string_sun,
@@ -209,6 +216,8 @@ def update_graph(clickData, year_range):
               yaxis = dict(title = 'Sunshine hours',gridcolor='black',),
               )
     }
+
+
 
 
 if __name__ == "__main__":
