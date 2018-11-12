@@ -115,33 +115,34 @@ def update_output(year_range, clickData):
          Input('my-range-slider', 'value')])
 
 def update_graph(clickData, year_range):
+    date_start = '{}'.format(year_range[0])
+    date_end = '{}'.format(year_range[1])
+    yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
+    string_dates = [str(x) for x in yearvalues]
+    newdata = df.loc[(df['yyyy'] > int(date_start)) & (df['yyyy'] <= int(date_end)), ['tmax', 'tmin', 'sun', 'rain', 'af']] 
+    string_tmax = [str(x) for x in newdata['tmax']]
+    string_tmin = [str(x) for x in newdata['tmin']]
 
-	date_start = '{}'.format(year_range[0])
-	date_end = '{}'.format(year_range[1])
-	yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
-	string_dates = [str(x) for x in yearvalues]
-	string_tmax = [str(x) for x in df['tmax']]
-	string_tmin = [str(x) for x in df['tmin']]
+    trace0 = go.Scatter(
+        x = string_dates,
+        y = string_tmax,
+        name = 'High Temperature',
+        line = dict(
+            color = ('rgb(205, 12, 24)'),
+            width = 4)
+        )
 
-	trace0 = go.Scatter(
-    x = string_dates,
-    y = string_tmax,
-    name = 'High Temperature',
-    line = dict(
-        color = ('rgb(205, 12, 24)'),
-        width = 4)
-    )
-	trace1 = go.Scatter(
-	x = string_dates,
-    y = string_tmin,
-    name = 'Low Temperature',
-    line = dict(
-        color = ('rgb(22, 96, 167)'),
-        width = 4,))
+    trace1 = go.Scatter(
+        x = string_dates,
+        y = string_tmin,
+        name = 'Low Temperature',
+        line = dict(
+            color = ('rgb(22, 96, 167)'),
+            width = 4,))
 
-	return {
-	'data': [trace0,trace1],
-	'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Max and Low Temperatures in Leuchar',
+    return {
+    'data': [trace0,trace1],
+    'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Max and Low Temperatures in Leuchar',
               xaxis = dict(title = 'Year Range', gridcolor='black',),
               yaxis = dict(title = 'Temperature (degrees Celsius)',gridcolor='black',),
               )
