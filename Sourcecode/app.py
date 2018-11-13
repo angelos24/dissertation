@@ -156,12 +156,12 @@ def update_graph(clickData, year_range):
 
 def update_graph(clickData, year_range):
 
-    date_start = '{}-01-01'.format(year_range[0])
-    date_end = '{}-12-31'.format(year_range[1])
+    date_start = '{}'.format(year_range[0])
+    date_end = '{}'.format(year_range[1])
     yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
     string_dates = [str(x) for x in yearvalues]
-
-    string_rain = [str(x) for x in df['rain']]
+    newdata = df.loc[(df['yyyy'] > int(date_start)) & (df['yyyy'] <= int(date_end)), ['tmax', 'tmin', 'sun', 'rain', 'af']] 
+    string_rain = [str(x) for x in newdata['rain']]
 
     trace1 = go.Bar(
     x=string_dates,
@@ -186,12 +186,13 @@ def update_graph(clickData, year_range):
 
 def update_graph(clickData, year_range):
 
-    date_start = '{}-01-01'.format(year_range[0])
-    date_end = '{}-12-31'.format(year_range[1])
+    date_start = '{}'.format(year_range[0])
+    date_end = '{}'.format(year_range[1])
     yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
     string_dates = [str(x) for x in yearvalues]
-    string_sun = [str(x) for x in df['sun']]
-    string_af = [str(x) for x in df['af']]
+    newdata = df.loc[(df['yyyy'] > int(date_start)) & (df['yyyy'] <= int(date_end)), ['tmax', 'tmin', 'sun', 'rain', 'af']] 
+    string_sun = [str(x) for x in newdata['sun']]
+    string_af = [str(x) for x in newdata['af']]
 
 
     trace1 = go.Bar(
