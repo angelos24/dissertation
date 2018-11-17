@@ -3,6 +3,7 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output
 import pandas as pd
+import statistics
 import numpy as np
 import plotly.graph_objs as go
 import json
@@ -23,6 +24,7 @@ df = pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\leuchar.csv')
 
 
 
+
 app.layout = html.Div([
 	html.H2("Scotland Weather Data"),
 
@@ -32,13 +34,13 @@ app.layout = html.Div([
             figure={
                 "data": [
                     dict(
-                    	lat = ['56.38'],
-                    	lon =  ['-2.88'],
+                    	lat = ['56.38','57.593'],
+                    	lon =  ['-2.88','-3.821'],
                         type = "scattermapbox",
                         customdata = df['tmax'],
                         mode = "markers",
                         marker = {'size': '14',},
-                        text = ['Leuchar']
+                        text = ['Leuchar','Nairn']
                     )
                 ],
                 "layout": dict(
@@ -100,13 +102,14 @@ def update_output(year_range, clickData):
     date_end = '{}'.format(year_range[1])
     yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
     string_dates = [str(x) for x in yearvalues]
-    # string_sun = [str(x) for x in df['sun']]
-    # string_af = [str(x) for x in df['af']]
     newdata = df.loc[(df['yyyy'] > int(date_start)) & (df['yyyy'] <= int(date_end)), ['tmax', 'tmin', 'sun', 'rain', 'af']] 
-    # mask = df['yyyy'].between(int(date_start), int(date_end))
     string_sun = [str(x) for x in newdata['tmax']]
     string_af = [str(x) for x in newdata['tmin']]
-    print(string_sun)
+    int_tmax = [int(float(x)) for x in newdata['tmax']]
+    int_tmin = [int(float(x)) for x in newdata['tmin']]
+    result = [statistics.mean(k) for k in zip(int_tmax, int_tmin)]
+    print(result)
+    return(string_af)
 
 
 @app.callback(
@@ -120,31 +123,44 @@ def update_graph(clickData, year_range):
     yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
     string_dates = [str(x) for x in yearvalues]
     newdata = df.loc[(df['yyyy'] > int(date_start)) & (df['yyyy'] <= int(date_end)), ['tmax', 'tmin', 'sun', 'rain', 'af']] 
-    string_tmax = [str(x) for x in newdata['tmax']]
-    string_tmin = [str(x) for x in newdata['tmin']]
+    string_tmax = [int(float(x)) for x in newdata['tmax']]
+    string_tmin = [int(float(x)) for x in newdata['tmin']]
+    data = np.array([string_tmax, string_tmin])
+    average = np.average(data, axis=0)
 
-    trace0 = go.Scatter(
-        x = string_dates,
-        y = string_tmax,
-        name = 'High Temperature',
-        line = dict(
-            color = ('rgb(205, 12, 24)'),
-            width = 4)
-        )
+    upper_bound = go.Scatter(
+        name='High Temperature',
+        x=string_dates,
+        y=string_tmax,
+        mode='lines',
+        marker=dict(color="#444"),
+        line=dict(width=0),
+        fillcolor='rgba(68, 68, 68, 0.7)',
+        fill='tonexty')
 
-    trace1 = go.Scatter(
-        x = string_dates,
-        y = string_tmin,
-        name = 'Low Temperature',
-        line = dict(
-            color = ('rgb(22, 96, 167)'),
-            width = 4,))
+    trace = go.Scatter(
+        name='average',
+        x=string_dates,
+        y=average,
+        mode='lines',
+        line=dict(color='rgb(255, 147, 41)'),
+        fillcolor='rgba(68, 68, 68, 0.7)',
+        fill='tonexty')
+
+    lower_bound = go.Scatter(
+        name='Low Temperature',
+        x=string_dates,
+        y=string_tmin,
+        marker=dict(color="#444"),
+        line=dict(width=0),
+        mode='lines')
 
     return {
-    'data': [trace0,trace1],
+    'data': [lower_bound, trace, upper_bound],
     'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Max and Low Temperatures in Leuchar',
               xaxis = dict(title = 'Year Range', gridcolor='black',),
               yaxis = dict(title = 'Temperature (degrees Celsius)',gridcolor='black',),
+              font=dict(size=14, color='#7f7f7f'),
               )
 	}
 
@@ -176,6 +192,8 @@ def update_graph(clickData, year_range):
     'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Percipitation in Leuchar',
               xaxis = dict(title = 'Year Range', gridcolor='black',),
               yaxis = dict(title = 'Rain (MM)',gridcolor='black',),
+              font=dict(size=14, color='#7f7f7f'),
+
               )
     }
 
@@ -198,14 +216,16 @@ def update_graph(clickData, year_range):
     trace1 = go.Bar(
     x=string_dates,
     y=string_sun,
+    name = 'Sunshine',
     marker=dict(
-        color='rgb(49,130,189)'
+        color='rgb(237, 250, 98)'
         )
     )
 
     trace2 = go.Bar(
     x=string_dates,
     y=string_af,
+    name = 'Air frost',
     marker=dict(
         color='red'
         )
@@ -216,10 +236,10 @@ def update_graph(clickData, year_range):
     'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Total Monthly Sunshine & Air Frost in Leuchar',
               xaxis = dict(title = 'Year Range', gridcolor='black',),
               yaxis = dict(title = 'Sunshine hours',gridcolor='black',),
+              font=dict(size=14, color='#7f7f7f'),
+
               )
     }
-
-
 
 
 if __name__ == "__main__":
