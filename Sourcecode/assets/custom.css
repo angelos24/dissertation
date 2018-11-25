@@ -1,9 +1,14 @@
 body {
-	background-color: black;
+ 
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.container-fluid {
+
 }
 
 .row {
-    border-bottom:  5px solid white;
+
 
 }
 
@@ -12,25 +17,46 @@ h2 {
     color: white;
     text-align: center;
     border: 2px solid white;
-    margin: 100px
+    margin: 100px;
 
 }
 
 h3 {
     color: white;
+
 }
+
+h5 {
+    color: white;
+    text-align: center;
+}
+
+h4 {
+    color: white;
+    text-align: center;
+    margin: 20px;
+    padding: 15px;
+    box-shadow:  0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    border: 1px solid white;
+}
+
 .app-header .app-header--title {
     font-size: 22px;
+
     padding-left: 5px;
 }
 
 .my-range-slider {
-	margin-top: 100px;
-	margin-bottom: 100px;
+   font-size: 2px;
+   margin: 30px 0px 30px 0px;
+   padding: 10px;
 
-    color: white;
+
 }
 .rc-slider-mark {
     font-size: 10px;
+
+
 }
 

@@ -23,8 +23,6 @@ for css in external_css:
 df = pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\leuchar.csv')
 
 
-
-
 app.layout = html.Div([
 	html.H2("Scotland Weather Data"),
 
@@ -40,7 +38,7 @@ app.layout = html.Div([
                         customdata = df['tmax'],
                         mode = "markers",
                         marker = {'size': '14',},
-                        text = ['Leuchar','Nairn']
+                        text = ['leuchar','nairn']
                     )
                 ],
                 "layout": dict(
@@ -56,22 +54,27 @@ app.layout = html.Div([
                 )
             },
         ),
-        dcc.RangeSlider(
-        className = 'my-range-slider',
-        id = 'my-range-slider',
-        min = df['yyyy'].min(),
-        max = df['yyyy'].max(),
-        marks = {str(date): str(date)
-        		for date in df['yyyy'].unique()},
-		value=[1970, 1993],
-
-		
-    ),
-        html.H3(id='test'),
+        html.Div([
+            html.H4('Showing data for:'),
+            dcc.RangeSlider(
+                className = 'my-range-slider',
+                id = 'my-range-slider',
+                min = df['yyyy'].min(),
+                max = df['yyyy'].max(),
+                marks = {str(date): str(date)
+                for date in df['yyyy'].unique()},
+                value=[1970, 1993],
+                ),
+            html.Div([
+                html.Div([html.H5('Max Temperature')], className='col-md-4'),
+                html.Div([html.H5('Low Temperature')], className='col-md-4'),
+                html.Div([html.H5('High Percipitation')], className='col-md-4'),
+                ], className='row'),
+            ], className='container-fluid'),
 
 
      html.Div([
-     	html.H3(id='year-range'),
+     	html.H3('test', id='year-range'),
 		], className='row'),
 
         html.Div([
@@ -93,23 +96,18 @@ app.layout = html.Div([
 
 @app.callback(
     Output('year-range', 'children'),
-    [Input('my-range-slider', 'value'),
-    Input('mapbox', 'clickData')]
+    [Input('mapbox', 'clickData')]
 )
 
-def update_output(year_range, clickData):
-    date_start = '{}'.format(year_range[0])
-    date_end = '{}'.format(year_range[1])
-    yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
-    string_dates = [str(x) for x in yearvalues]
-    newdata = df.loc[(df['yyyy'] > int(date_start)) & (df['yyyy'] <= int(date_end)), ['tmax', 'tmin', 'sun', 'rain', 'af']] 
-    string_sun = [str(x) for x in newdata['tmax']]
-    string_af = [str(x) for x in newdata['tmin']]
-    int_tmax = [int(float(x)) for x in newdata['tmax']]
-    int_tmin = [int(float(x)) for x in newdata['tmin']]
-    result = [statistics.mean(k) for k in zip(int_tmax, int_tmin)]
-    print(result)
-    return(string_af)
+def showstation(clickData):
+    point = clickData['points'][0]
+    return pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\'+ point['text'] +'.csv')
+
+# test = 'leuchar'
+
+# df = pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\'+ test +'.csv')
+
+
 
 
 @app.callback(
@@ -118,6 +116,8 @@ def update_output(year_range, clickData):
          Input('my-range-slider', 'value')])
 
 def update_graph(clickData, year_range):
+    point = clickData['points'][0]
+    df = pd.read_csv('C:\\Users\\aathan\\Desktop\\dissertation\\data\\'+ point['text'] +'.csv')
     date_start = '{}'.format(year_range[0])
     date_end = '{}'.format(year_range[1])
     yearvalues = pd.date_range(start=date_start ,end=date_end,freq='M')
@@ -158,8 +158,8 @@ def update_graph(clickData, year_range):
     return {
     'data': [lower_bound, trace, upper_bound],
     'layout': dict(plot_bgcolor='black', paper_bgcolor='black', title = 'Max and Low Temperatures in Leuchar',
-              xaxis = dict(title = 'Year Range', gridcolor='black',),
-              yaxis = dict(title = 'Temperature (degrees Celsius)',gridcolor='black',),
+              xaxis = dict(title = 'Year Range', gridcolor='rgba(0, 0, 0, 0.9)',),
+              yaxis = dict(title = 'Temperature (degrees Celsius)',gridcolor='rgba(0, 0, 0, 0.9)',),
               font=dict(size=14, color='#7f7f7f'),
               )
 	}
