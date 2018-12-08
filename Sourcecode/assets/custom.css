@@ -7,22 +7,45 @@ body {
 
 }
 
-.row {
 
-
+hr {
+    color: white;
 }
 
 h2 {
     font-size: 50px;
     color: white;
     text-align: center;
-    border: 2px solid white;
     margin: 100px;
+    padding: 10px;
+    box-shadow:  0 14px 18px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color:rgba(1, 101, 191, 0.2);
+
+
 
 }
 
 h3 {
     color: white;
+
+}
+
+.stats2 {
+    background-color:rgba(1, 101, 191, 0.2);
+    padding: 15px;
+    margin-top: 20px;
+    box-shadow:  0 14px 18px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    margin-bottom: 20px;
+    border: 5px solid rgba(1, 101, 191, 0.2);
+}
+
+ .stats h5 {
+    text-align: left !important;
+
+    background-color:rgba(1, 101, 191, 0.2);
+    padding: 15px;
+    box-shadow:  0 14px 18px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
 }
 
