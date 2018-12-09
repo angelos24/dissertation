@@ -25,6 +25,8 @@ test = df.loc[df['yyyy'].idxmin()]
 print(test)
 
 
+# Start of application layout
+
 app.layout = html.Div([
 	html.H2("Scotland Weather Data"),    
     html.Div([
@@ -76,14 +78,13 @@ app.layout = html.Div([
         ], className='row'),
     ], className='container-fluid'),
 
+        # Range slider
         html.Div([
             dcc.RangeSlider(
                 className = 'my-range-slider',
                 id = 'my-range-slider',
                 min = df['yyyy'].min(),
                 max = df['yyyy'].max(),
-                # marks = {str(date): str(date)
-                # for date in df['yyyy'].unique()},
                 value=[1980, 1993],
                 ),
             ], className='container-fluid stats2'),
@@ -105,6 +106,12 @@ app.layout = html.Div([
 	],  className='container-fluid')
 
 
+# End of application layout
+
+
+
+# callback to low percipitation
+
 @app.callback(
     Output('low_perc', 'children'),
     [Input('mapbox', 'clickData')]
@@ -119,11 +126,13 @@ def getlowperc(clickData):
     year = int(filter['yyyy'])
     return 'Lowest percipitation (in MM) '+str(rain)+ ' in '+str(month)+"/"+str(year)
 
+# callback to high percipitation
 
 @app.callback(
     Output('high_perc', 'children'),
     [Input('mapbox', 'clickData')]
 )
+
 
 def gethighperc(clickData):
     point = clickData['points'][0]
@@ -134,6 +143,8 @@ def gethighperc(clickData):
     year = int(filter['yyyy'])
     return 'Highest percipitation (in MM)  were '+str(rain)+ ' in '+str(month)+"/"+str(year)
 
+
+# callback for lowest sunshine hours
 
 @app.callback(
     Output('low_sunshine', 'children'),
@@ -149,6 +160,7 @@ def getlowsun(clickData):
     year = int(filter['yyyy'])
     return 'Lowest sunshine hours were '+str(sun)+ ' in '+str(month)+"/"+str(year)
 
+# callback for highest sunshine hours
 
 
 @app.callback(
@@ -165,6 +177,7 @@ def gethighsun(clickData):
     year = int(filter['yyyy'])
     return 'Highest sunshine hours were '+str(sun)+ ' in '+str(month)+"/"+str(year)
 
+# callback for lowest temperature
 
 @app.callback(
     Output('low_temp', 'children'),
@@ -180,6 +193,8 @@ def getlowtemp(clickData):
     year = filter['yyyy']
     return 'Lowest temperature was '+str(int(temp))+ ' in '+str(int(month))+"/"+str(int(year))
 
+# callback for range slider
+
 
 @app.callback(
     Output('years', 'children'),
@@ -191,6 +206,7 @@ def get_yearange(year_range):
     date_end = '{}'.format(year_range[1])
     return 'The default dates shown are from '+date_start+ ' until ' +date_end
 
+# callback for highest temperature
 
 @app.callback(
     Output('high_temp', 'children'),
@@ -206,6 +222,8 @@ def gethightemp(clickData):
     year = int(filter['yyyy'])
     return 'Highest temperature was '+str(temp)+ ' in '+str(month)+"/"+str(year)
 
+# callback to return station name
+
 
 @app.callback(
     Output('test', 'children'),
@@ -216,6 +234,8 @@ def getstationname(clickData):
     point = clickData['points'][0]
     station = point['text']
     return 'Showing data for '+station
+
+# callback for temperature graph
 
 
 @app.callback(
@@ -273,6 +293,7 @@ def update_graph(clickData, year_range,):
 	}
 
     
+# callback for rain graph
 
 
 @app.callback(
@@ -308,6 +329,9 @@ def update_graph(clickData, year_range,):
 
               )
     }
+
+# callback for sunshine graph
+
 
 @app.callback(
         Output('sun_graph', 'figure'),
